@@ -38,6 +38,8 @@ GET /api/screenshot?url=https://example.com
 | `format` | `png` | `png` or `jpeg` |
 | `download` | `false` | `true` = raw image |
 
+Opened in a browser, the URL returns the image directly. From code you get JSON (a base64 image) unless you pass `download=true`.
+
 ## License
 
 MIT

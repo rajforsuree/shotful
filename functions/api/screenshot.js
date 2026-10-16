@@ -50,7 +50,8 @@ async function handle({ request, env }) {
   const fullPage = bool(src.fullPage, true);
   const width = clamp(src.width, 320, 3840, 1440);
   const format = src.format === 'jpeg' ? 'jpeg' : 'png';
-  const download = bool(src.download, false);
+  const wantsHtml = (request.headers.get('accept') || '').includes('text/html');
+  const download = bool(src.download, false) || wantsHtml;
 
   let safeUrl;
   try { safeUrl = assertPublicUrl(src.url); }
