@@ -1,109 +1,151 @@
 <!doctype html>
 <html lang="en">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Website Screenshot API — demo</title>
-  <style>
-    :root { --bg:#0b1020; --card:#141a2e; --line:#26304d; --fg:#e8ecf6; --muted:#93a0c0; --accent:#6c8cff; }
-    * { box-sizing: border-box; }
-    body { margin:0; font:16px/1.5 system-ui, -apple-system, Segoe UI, Roboto, sans-serif;
-           background:radial-gradient(1200px 600px at 50% -10%, #1a2450 0%, var(--bg) 60%); color:var(--fg); }
-    .wrap { max-width: 1080px; margin: 0 auto; padding: 48px 20px 80px; }
-    h1 { font-size: 30px; margin: 0 0 6px; letter-spacing:-.02em; }
-    p.sub { color: var(--muted); margin: 0 0 28px; }
-    .card { background: var(--card); border:1px solid var(--line); border-radius: 14px; padding: 18px; }
-    .row { display:flex; gap:10px; flex-wrap: wrap; }
-    input[type=url] { flex:1 1 420px; min-width: 240px; padding: 13px 14px; border-radius:10px;
-           border:1px solid var(--line); background:#0d1326; color:var(--fg); font-size:15px; }
-    input[type=url]:focus { outline:2px solid var(--accent); border-color:transparent; }
-    button { padding: 13px 20px; border-radius:10px; border:0; background:var(--accent); color:#fff;
-           font-weight:600; font-size:15px; cursor:pointer; }
-    button:disabled { opacity:.55; cursor:progress; }
-    .opts { display:flex; gap:18px; flex-wrap:wrap; margin-top:14px; color:var(--muted); font-size:14px; align-items:center; }
-    .opts label { display:flex; gap:7px; align-items:center; cursor:pointer; }
-    .opts select { background:#0d1326; color:var(--fg); border:1px solid var(--line); border-radius:8px; padding:6px 8px; }
-    .out { margin-top: 26px; }
-    .status { color: var(--muted); margin: 14px 0; min-height: 22px; }
-    .status.err { color:#ff8080; }
-    .shot { width:100%; border:1px solid var(--line); border-radius:12px; background:#fff; display:block; }
-    .meta { color:var(--muted); font-size:13px; margin-top:10px; }
-    a.dl { color: var(--accent); }
-  </style>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>ShotAPI — screenshot any website</title>
+<meta name="description" content="Paste any URL, get a full-page screenshot. Free, no sign-up." />
+<style>
+  :root{ --ink:#000; --paper:#fff; }
+  *{ box-sizing:border-box; margin:0; padding:0; }
+  html,body{ background:var(--paper); color:var(--ink); }
+  body{
+    font:16px/1.5 -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+    -webkit-font-smoothing:antialiased; text-rendering:optimizeLegibility;
+  }
+  a{ color:inherit; }
+  ::selection{ background:#000; color:#fff; }
+
+  /* ---------- full-screen hero ---------- */
+  .hero{
+    min-height:100svh;
+    display:flex; flex-direction:column; justify-content:space-between;
+    padding:clamp(20px,4vw,52px);
+    gap:40px;
+  }
+  .mark{
+    font-size:12px; font-weight:700; letter-spacing:.32em; text-transform:uppercase;
+  }
+
+  .core{ max-width:1100px; width:100%; }
+  h1{
+    font-size:clamp(2.4rem,7.4vw,6.2rem);
+    line-height:1.02; letter-spacing:-.045em; font-weight:700;
+  }
+  .sub{
+    margin-top:1.1rem; font-size:clamp(1rem,2.1vw,1.45rem); opacity:.55; letter-spacing:-.01em;
+  }
+
+  form{
+    display:flex; align-items:stretch; margin-top:clamp(2rem,5vw,3.4rem);
+    border-bottom:2px solid var(--ink);
+  }
+  input[type=url]{
+    flex:1; min-width:0; border:0; background:none; color:var(--ink);
+    font:inherit; font-size:clamp(1.05rem,2.3vw,1.6rem); letter-spacing:-.01em;
+    padding:.9rem 0; outline:none;
+  }
+  input[type=url]::placeholder{ color:var(--ink); opacity:.3; }
+  button{
+    border:0; background:var(--ink); color:var(--paper); cursor:pointer;
+    font:inherit; font-weight:600; letter-spacing:.01em;
+    padding:0 clamp(1.2rem,3vw,2.4rem); white-space:nowrap;
+  }
+  button:hover{ opacity:.78; }
+  button:disabled{ opacity:.4; cursor:progress; }
+
+  .opt{
+    display:flex; align-items:center; gap:.55rem; margin-top:1rem;
+    font-size:.92rem; opacity:.65; cursor:pointer; width:max-content;
+  }
+  .opt input{ accent-color:#000; }
+
+  .status{ margin-top:1.1rem; font-size:.95rem; opacity:.6; min-height:1.3em; }
+  .status.err{ opacity:1; font-weight:600; }
+  .status.ok{ opacity:.85; }
+
+  .foot{
+    display:flex; justify-content:space-between; gap:16px; flex-wrap:wrap;
+    font-size:.8rem; opacity:.5; letter-spacing:.01em;
+  }
+
+  /* ---------- result ---------- */
+  .result{ border-top:2px solid var(--ink); }
+  .result .head{
+    display:flex; justify-content:space-between; gap:16px; flex-wrap:wrap;
+    padding:14px clamp(20px,4vw,52px); font-size:.82rem; opacity:.6;
+  }
+  .result img{ display:block; width:100%; height:auto; }
+  .result a{ text-decoration:underline; }
+</style>
 </head>
 <body>
-  <div class="wrap">
-    <h1>Website Screenshot API</h1>
-    <p class="sub">Paste any URL — get a full-page screenshot back.</p>
 
-    <div class="card">
-      <div class="row">
-        <input id="url" type="url" placeholder="https://example.com" autocomplete="off" />
-        <button id="go">Capture</button>
-      </div>
-      <div class="opts">
-        <label><input id="full" type="checkbox" checked /> Full page</label>
-        <label>Width
-          <select id="width">
-            <option>1280</option><option selected>1440</option><option>1920</option>
-          </select>
-        </label>
-        <label>Format
-          <select id="format"><option selected>png</option><option>jpeg</option></select>
-        </label>
-      </div>
-    </div>
+<main class="hero">
+  <div class="mark">ShotAPI</div>
 
-    <div class="out">
-      <div id="status" class="status"></div>
-      <div id="holder"></div>
-    </div>
+  <div class="core">
+    <h1>Screenshot any&nbsp;website.</h1>
+    <p class="sub">Full page, in one call. No sign-up.</p>
+
+    <form id="form" autocomplete="off">
+      <input id="url" type="url" placeholder="https://example.com" spellcheck="false" aria-label="Website URL" />
+      <button id="go" type="submit">Capture</button>
+    </form>
+
+    <label class="opt"><input id="full" type="checkbox" checked /> Full page</label>
+    <p class="status" id="status" role="status"></p>
   </div>
 
-  <script>
-    const $ = (id) => document.getElementById(id);
-    const status = $('status'), holder = $('holder'), go = $('go');
+  <div class="foot">
+    <span id="endpoint">/api/screenshot?url=…</span>
+    <a href="https://github.com/rajforsuree/website-screenshot-api" target="_blank" rel="noopener">Source</a>
+  </div>
+</main>
 
-    $('go').addEventListener('click', capture);
-    $('url').addEventListener('keydown', (e) => { if (e.key === 'Enter') capture(); });
+<section class="result" id="result" hidden></section>
 
-    function capture() {
-      const url = $('url').value.trim();
-      if (!url) { status.className = 'status err'; status.textContent = 'Enter a URL first.'; return; }
+<script>
+  const $ = (id) => document.getElementById(id);
+  const endpoint = location.origin + '/api/screenshot';
 
-      const params = new URLSearchParams({
-        url,
-        fullPage: $('full').checked,
-        width: $('width').value,
-        format: $('format').value,
-        download: 'true',
-      });
-      const src = '/screenshot?' + params.toString();
+  const setStatus = (t, cls = '') => { const s = $('status'); s.className = 'status ' + cls; s.textContent = t; };
 
-      go.disabled = true;
-      holder.innerHTML = '';
-      status.className = 'status';
-      status.textContent = 'Capturing… this can take a few seconds for long pages.';
+  $('form').addEventListener('submit', (e) => {
+    e.preventDefault();
+    const url = $('url').value.trim();
+    if (!url) { setStatus('Enter a URL first.', 'err'); return; }
 
-      const img = new Image();
-      img.className = 'shot';
-      img.onload = () => {
-        go.disabled = false;
-        status.textContent = 'Done.';
-        holder.appendChild(img);
-        const meta = document.createElement('div');
-        meta.className = 'meta';
-        meta.innerHTML = `${img.naturalWidth}×${img.naturalHeight}px · ` +
-          `<a class="dl" href="${src}" download>download image</a>`;
-        holder.appendChild(meta);
-      };
-      img.onerror = () => {
-        go.disabled = false;
-        status.className = 'status err';
-        status.textContent = 'Could not capture that URL. Check it is a public http(s) site.';
-      };
-      img.src = src;
-    }
-  </script>
+    const src = endpoint + '?' + new URLSearchParams({
+      url, fullPage: $('full').checked, download: 'true',
+    });
+
+    const go = $('go'), result = $('result');
+    go.disabled = true;
+    setStatus('Capturing… long pages can take a few seconds.');
+    result.hidden = true;
+
+    const img = new Image();
+    img.onload = () => {
+      go.disabled = false;
+      setStatus('Done.', 'ok');
+      result.innerHTML = '';
+      const head = document.createElement('div');
+      head.className = 'head';
+      head.innerHTML = `<span>${img.naturalWidth} × ${img.naturalHeight}px</span>`;
+      const dl = document.createElement('a');
+      dl.href = src; dl.download = 'screenshot.png'; dl.textContent = 'Download';
+      head.appendChild(dl);
+      result.append(head, img);
+      result.hidden = false;
+      result.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    };
+    img.onerror = () => {
+      go.disabled = false;
+      setStatus('Could not capture that URL — check it is a public http(s) site.', 'err');
+    };
+    img.src = src;
+  });
+</script>
 </body>
 </html>

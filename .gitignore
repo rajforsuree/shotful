@@ -1,19 +1,16 @@
 # Dependencies
 node_modules/
 
-# Logs
-*.log
-npm-debug.log*
-
-# Local output / captured images
-*.png
-*.jpg
-*.jpeg
-!docs/*.png
+# Wrangler
+.wrangler/
+.dev.vars
 
 # Env
 .env
 .env.*
+
+# Logs
+*.log
 
 # OS / editor
 .DS_Store
