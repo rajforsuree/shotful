@@ -1,0 +1,10 @@
+{
+  "name": "shotapi-vercel",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Vercel deployment for ShotAPI — full-page screenshots via a slim bundled Chromium.",
+  "dependencies": {
+    "@sparticuz/chromium": "^123.0.0",
+    "puppeteer-core": "^23.0.0"
+  }
+}

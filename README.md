@@ -95,9 +95,31 @@ Returns `{ "ok": true, "running": 0, "queued": 0 }` — wire this to your load b
 | `NAV_TIMEOUT_MS`  | `30000`             | per-page navigation timeout             |
 | `PROXY_SERVER`    | —                   | e.g. `http://proxy:3128` if you need one |
 
+## Put it online — a public site + API
+
+This repo ships two ready-to-deploy setups, so anyone can use it from a browser, not just from code. Both serve the same frontend (`web/index.html`) and expose the same `/api/screenshot` endpoint — the site and the API come up together.
+
+![The ShotAPI site](docs/site.png)
+
+| | **Cloudflare Workers** (recommended) | **Vercel** |
+|---|---|---|
+| Browser | Managed headless browser (Browser Rendering) — nothing to bundle | You bundle a slim Chromium (`@sparticuz/chromium`) |
+| Deploy | `cd worker && npm i && npx wrangler deploy` | `cd vercel && npm i && npx vercel --prod` |
+| Cold starts | None — the browser is a service | ~1–3s per cold start |
+| Cost | Free: 10 browser-min/day · Paid: $5/mo + $0.09/browser-hr | Free (Hobby), within function limits |
+| Limits | 60s browser timeout, 3 concurrent (free) | 250MB bundle cap, 300s max duration (Hobby) |
+| Best for | This workload — full-page screenshots, zero maintenance | Teams already standardised on Vercel |
+
+**Why Cloudflare wins here:** screenshots need a headless Chromium, and Cloudflare is the one of the two that runs that browser *for you*. On Vercel you're responsible for shipping and warming a Chromium binary inside a 250MB function — doable, but it's the part that tends to break. Cloudflare's free tier covers a personal project outright; $5/mo covers real traffic.
+
+- Cloudflare → [`worker/README.md`](worker/README.md)
+- Vercel → [`vercel/README.md`](vercel/README.md)
+
+Prefer a plain container? The `Dockerfile` below runs the same API anywhere (Railway, Render, Fly, a VPS).
+
 ## Deploy
 
-**Docker** (recommended — Chromium's shared libs are the usual pain point):
+**Docker** (recommended for a self-hosted container — Chromium's shared libs are the usual pain point):
 
 ```bash
 docker build -t shot-api .
@@ -108,15 +130,18 @@ docker compose up
 
 **Or** on a VM: install `chromium`, then `CHROME_PATH=/usr/bin/chromium node server.js` behind Nginx / a load balancer.
 
-> Avoid serverless (Lambda / Vercel) unless you bundle Chromium — the cold-start and binary-size cost isn't worth it. A small always-on container is cheaper and simpler here.
+> This runs the same API as the Cloudflare Worker and Vercel setups above — pick whichever host you prefer. The Dockerfile is the most portable.
 
 ## Project structure
 
 ```
 .
-├── server.js               # the API
+├── server.js               # the API (self-hosted, Node/Express)
 ├── test.js                 # smoke test (SSRF guard + real capture)
-├── public/index.html       # built-in demo UI
+├── public/index.html       # demo UI served by the Node server
+├── web/index.html          # the public site (used by the cloud deployments)
+├── worker/                 # Cloudflare Workers deployment  (recommended)
+├── vercel/                 # Vercel deployment (alternative)
 ├── Dockerfile              # chromium + app
 ├── docker-compose.yml
 └── .github/workflows/ci.yml
