@@ -18,7 +18,6 @@ On Cloudflare Pages:
 
 1. Create a Pages project from this repo.
 2. Build command `npm install`, build output directory `public`.
-3. Add a Browser Rendering binding named `BROWSER` (Settings → Functions → Bindings).
 
 Site goes live at `https://<project>.pages.dev`.
 
