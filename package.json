@@ -1,8 +1,13 @@
 {
-  "name": "shotapi",
+  "name": "shotful",
   "version": "1.0.0",
   "private": true,
   "description": "Screenshot any website — full page, one call. Cloudflare Pages + Browser Rendering.",
+  "homepage": "https://github.com/rajforsuree/shotful#readme",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/rajforsuree/shotful.git"
+  },
   "scripts": {
     "dev": "wrangler pages dev",
     "deploy": "wrangler pages deploy"

@@ -1,4 +1,4 @@
-# ShotAPI
+# Shotful
 
 **Screenshot any website — full page, one call.**
 
@@ -6,7 +6,7 @@ A Cloudflare Pages site with a single API endpoint, `/api/screenshot`, backed by
 Cloudflare's managed headless browser (Browser Rendering). Paste a URL in the
 browser, or call the endpoint from your own code.
 
-![ShotAPI](docs/preview.png)
+![Shotful](docs/preview.png)
 
 ## Structure
 
@@ -39,7 +39,7 @@ Your site is live at `https://<project>.pages.dev`.
 
 ```bash
 npm install
-npx wrangler pages project create shotapi     # first time only
+npx wrangler pages project create shotful     # first time only
 npx wrangler pages deploy
 ```
 
