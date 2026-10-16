@@ -1,0 +1,109 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Website Screenshot API — demo</title>
+  <style>
+    :root { --bg:#0b1020; --card:#141a2e; --line:#26304d; --fg:#e8ecf6; --muted:#93a0c0; --accent:#6c8cff; }
+    * { box-sizing: border-box; }
+    body { margin:0; font:16px/1.5 system-ui, -apple-system, Segoe UI, Roboto, sans-serif;
+           background:radial-gradient(1200px 600px at 50% -10%, #1a2450 0%, var(--bg) 60%); color:var(--fg); }
+    .wrap { max-width: 1080px; margin: 0 auto; padding: 48px 20px 80px; }
+    h1 { font-size: 30px; margin: 0 0 6px; letter-spacing:-.02em; }
+    p.sub { color: var(--muted); margin: 0 0 28px; }
+    .card { background: var(--card); border:1px solid var(--line); border-radius: 14px; padding: 18px; }
+    .row { display:flex; gap:10px; flex-wrap: wrap; }
+    input[type=url] { flex:1 1 420px; min-width: 240px; padding: 13px 14px; border-radius:10px;
+           border:1px solid var(--line); background:#0d1326; color:var(--fg); font-size:15px; }
+    input[type=url]:focus { outline:2px solid var(--accent); border-color:transparent; }
+    button { padding: 13px 20px; border-radius:10px; border:0; background:var(--accent); color:#fff;
+           font-weight:600; font-size:15px; cursor:pointer; }
+    button:disabled { opacity:.55; cursor:progress; }
+    .opts { display:flex; gap:18px; flex-wrap:wrap; margin-top:14px; color:var(--muted); font-size:14px; align-items:center; }
+    .opts label { display:flex; gap:7px; align-items:center; cursor:pointer; }
+    .opts select { background:#0d1326; color:var(--fg); border:1px solid var(--line); border-radius:8px; padding:6px 8px; }
+    .out { margin-top: 26px; }
+    .status { color: var(--muted); margin: 14px 0; min-height: 22px; }
+    .status.err { color:#ff8080; }
+    .shot { width:100%; border:1px solid var(--line); border-radius:12px; background:#fff; display:block; }
+    .meta { color:var(--muted); font-size:13px; margin-top:10px; }
+    a.dl { color: var(--accent); }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <h1>Website Screenshot API</h1>
+    <p class="sub">Paste any URL — get a full-page screenshot back.</p>
+
+    <div class="card">
+      <div class="row">
+        <input id="url" type="url" placeholder="https://example.com" autocomplete="off" />
+        <button id="go">Capture</button>
+      </div>
+      <div class="opts">
+        <label><input id="full" type="checkbox" checked /> Full page</label>
+        <label>Width
+          <select id="width">
+            <option>1280</option><option selected>1440</option><option>1920</option>
+          </select>
+        </label>
+        <label>Format
+          <select id="format"><option selected>png</option><option>jpeg</option></select>
+        </label>
+      </div>
+    </div>
+
+    <div class="out">
+      <div id="status" class="status"></div>
+      <div id="holder"></div>
+    </div>
+  </div>
+
+  <script>
+    const $ = (id) => document.getElementById(id);
+    const status = $('status'), holder = $('holder'), go = $('go');
+
+    $('go').addEventListener('click', capture);
+    $('url').addEventListener('keydown', (e) => { if (e.key === 'Enter') capture(); });
+
+    function capture() {
+      const url = $('url').value.trim();
+      if (!url) { status.className = 'status err'; status.textContent = 'Enter a URL first.'; return; }
+
+      const params = new URLSearchParams({
+        url,
+        fullPage: $('full').checked,
+        width: $('width').value,
+        format: $('format').value,
+        download: 'true',
+      });
+      const src = '/screenshot?' + params.toString();
+
+      go.disabled = true;
+      holder.innerHTML = '';
+      status.className = 'status';
+      status.textContent = 'Capturing… this can take a few seconds for long pages.';
+
+      const img = new Image();
+      img.className = 'shot';
+      img.onload = () => {
+        go.disabled = false;
+        status.textContent = 'Done.';
+        holder.appendChild(img);
+        const meta = document.createElement('div');
+        meta.className = 'meta';
+        meta.innerHTML = `${img.naturalWidth}×${img.naturalHeight}px · ` +
+          `<a class="dl" href="${src}" download>download image</a>`;
+        holder.appendChild(meta);
+      };
+      img.onerror = () => {
+        go.disabled = false;
+        status.className = 'status err';
+        status.textContent = 'Could not capture that URL. Check it is a public http(s) site.';
+      };
+      img.src = src;
+    }
+  </script>
+</body>
+</html>

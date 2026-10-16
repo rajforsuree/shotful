@@ -1,0 +1,38 @@
+{
+  "name": "website-screenshot-api",
+  "version": "1.0.0",
+  "description": "Turn any URL into a full-page screenshot via a simple HTTP API. Handles SSRF safety, lazy loading, and very long pages.",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "test": "node test.js"
+  },
+  "keywords": [
+    "screenshot",
+    "api",
+    "puppeteer",
+    "headless-chrome",
+    "full-page-screenshot",
+    "express",
+    "web-scraping",
+    "ssrf"
+  ],
+  "author": "Rajesh Paswan",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/rajforsuree/website-screenshot-api.git"
+  },
+  "bugs": {
+    "url": "https://github.com/rajforsuree/website-screenshot-api/issues"
+  },
+  "homepage": "https://github.com/rajforsuree/website-screenshot-api#readme",
+  "dependencies": {
+    "express": "^4.19.2",
+    "puppeteer-core": "^23.0.0",
+    "jimp": "^0.22.12"
+  },
+  "engines": {
+    "node": ">=20"
+  }
+}
