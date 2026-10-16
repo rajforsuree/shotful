@@ -1,18 +1,8 @@
-/**
- * GET /api/screenshot?url=…&fullPage=true&width=1440&format=png&download=true
- *
- * Cloudflare Pages Function. Takes a full-page screenshot using Cloudflare's
- * managed headless browser (Browser Rendering), bound as env.BROWSER.
- */
-
 import puppeteer from '@cloudflare/puppeteer';
 
 const NAV_TIMEOUT_MS = 30000;
 const MAX_URL_LEN = 2048;
 
-/* ---- SSRF guard ---------------------------------------------------- */
-/* Pages Functions can't reach private networks anyway, but we still     */
-/* refuse obvious internal targets so the endpoint can't be a probe.    */
 const PRIVATE_V4 = /^(0\.|10\.|127\.|169\.254\.|172\.(1[6-9]|2\d|3[01])\.|192\.168\.|100\.(6[4-9]|[7-9]\d|1[0-2])\d?\.)/;
 
 function assertPublicUrl(raw) {
@@ -30,7 +20,6 @@ function assertPublicUrl(raw) {
   return u.toString();
 }
 
-/* ---- helpers ------------------------------------------------------- */
 const clamp = (n, lo, hi, d) => Math.min(Math.max(parseInt(n, 10) || d, lo), hi);
 const bool = (v, d) => (v === undefined || v === '' ? d : v === true || v === 'true' || v === '1');
 
@@ -46,14 +35,14 @@ const CORS = {
   'Access-Control-Allow-Methods': 'GET, POST, OPTIONS',
   'Access-Control-Allow-Headers': 'Content-Type',
 };
+
 const json = (obj, status = 200) =>
   new Response(JSON.stringify(obj), { status, headers: { 'content-type': 'application/json; charset=utf-8', ...CORS } });
 
-/* ---- the work ------------------------------------------------------ */
 async function handle({ request, env }) {
   const query = Object.fromEntries(new URL(request.url).searchParams);
   let body = {};
-  if (request.method === 'POST') { try { body = await request.json(); } catch { /* ignore */ } }
+  if (request.method === 'POST') { try { body = await request.json(); } catch {} }
   const src = { ...query, ...body };
 
   if (!src.url) return json({ error: 'Missing "url"' }, 400);
@@ -75,7 +64,6 @@ async function handle({ request, env }) {
     const page = await browser.newPage();
     await page.setViewport({ width, height: 900 });
     await page.goto(safeUrl, { waitUntil: 'networkidle0', timeout: NAV_TIMEOUT_MS });
-    // pull lazy-loaded content into view, then return to the top
     await page.evaluate(() => window.scrollTo(0, document.body.scrollHeight));
     await new Promise((r) => setTimeout(r, 600));
     await page.evaluate(() => window.scrollTo(0, 0));

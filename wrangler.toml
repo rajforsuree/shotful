@@ -3,7 +3,5 @@ pages_build_output_dir = "public"
 compatibility_date = "2026-10-01"
 compatibility_flags = ["nodejs_compat"]
 
-# Cloudflare's managed headless browser, used by functions/api/screenshot.js
-# as env.BROWSER.
 [browser]
 binding = "BROWSER"
