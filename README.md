@@ -26,9 +26,18 @@ wrangler.toml             Pages config + browser binding
 
 1. Cloudflare dashboard → **Workers & Pages** → **Create** → **Pages** → **Connect to Git**.
 2. Pick this repository.
-3. **Build command:** leave empty.
+3. **Build command:** `npm install`  ← **required, do not leave empty**
 4. **Build output directory:** `public`.
 5. **Save and Deploy.**
+
+> **Why the build command matters.** `functions/api/screenshot.js` imports
+> `@cloudflare/puppeteer`. Pages only bundles that import if the dependency is
+> installed first. With an empty build command Pages skips the install step and
+> the build fails with `Could not resolve "@cloudflare/puppeteer"`. Setting the
+> build command to `npm install` (or `npm install --omit=dev`) fixes it.
+> The build command is a dashboard setting — it cannot be set from a repo file.
+> Already created the project? Set it under **Settings → Builds & deployments →
+> Build configurations → Edit**, then retry the deployment.
 
 Then attach the browser: **Settings → Functions → Bindings → Add → Browser Rendering**,
 and name the binding **`BROWSER`**.
@@ -87,6 +96,14 @@ curl "https://<project>.pages.dev/api/screenshot?url=https://example.com&downloa
 
 Returns JSON (with a base64 image) by default, or the raw image when
 `download=true`. `POST` with a JSON body works too.
+
+## Troubleshooting
+
+- **`Could not resolve "@cloudflare/puppeteer"`** — the build command is empty.
+  Set it to `npm install` (see above) and redeploy.
+- **`Browser binding not configured` (HTTP 500)** — `env.BROWSER` is missing.
+  Add it in **Settings → Functions → Bindings → Add → Browser Rendering** and name
+  it `BROWSER`, then redeploy.
 
 ## Notes
 
