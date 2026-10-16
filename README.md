@@ -1,3 +1,5 @@
+<img src="public/icon.svg" width="64" alt="Shotful">
+
 # Shotful
 
 Screenshot any website — the whole page, in one call.
@@ -8,7 +10,7 @@ Paste a URL on the site and you get the full page back as a single image. The sa
 
 ## Files
 
-- `public/` — the website
+- `public/` — the website (HTML, CSS, JS, icon)
 - `functions/api/screenshot.js` — the API
 - `wrangler.toml` — config
 
@@ -18,6 +20,7 @@ On Cloudflare Pages:
 
 1. Create a Pages project from this repo.
 2. Build command `npm install`, build output directory `public`.
+3. Add a Browser Rendering binding named `BROWSER` (Settings → Functions → Bindings).
 
 Site goes live at `https://<project>.pages.dev`.
 

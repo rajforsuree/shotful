@@ -3,86 +3,60 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>Shotful — screenshot any website</title>
-<meta name="description" content="Paste any URL, get a full-page screenshot. Free, no sign-up." />
-<style>
-  :root{ --ink:#000; --paper:#fff; }
-  *{ box-sizing:border-box; margin:0; padding:0; }
-  html,body{ background:var(--paper); color:var(--ink); }
-  body{
-    font:16px/1.5 -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
-    -webkit-font-smoothing:antialiased; text-rendering:optimizeLegibility;
-  }
-  a{ color:inherit; }
-  ::selection{ background:#000; color:#fff; }
 
-  .hero{
-    min-height:100svh;
-    display:flex; flex-direction:column; justify-content:space-between;
-    padding:clamp(20px,4vw,52px);
-    gap:40px;
-  }
-  .mark{
-    font-size:12px; font-weight:700; letter-spacing:.32em; text-transform:uppercase;
-  }
+<title>Shotful — full-page screenshots of any website</title>
+<meta name="description" content="Paste any URL and get the whole page back as one screenshot. Free, no sign-up, no extension. Also available as a simple HTTP API." />
+<meta name="keywords" content="screenshot, full page screenshot, website screenshot, screenshot api, capture website, long screenshot, web page capture" />
+<meta name="author" content="Shotful" />
+<meta name="robots" content="index, follow, max-image-preview:large" />
+<meta name="theme-color" content="#000000" />
+<link rel="canonical" href="https://shotful.pages.dev/" />
 
-  .core{ max-width:1100px; width:100%; }
-  h1{
-    font-size:clamp(2.4rem,7.4vw,6.2rem);
-    line-height:1.02; letter-spacing:-.045em; font-weight:700;
-  }
-  .sub{
-    margin-top:1.1rem; font-size:clamp(1rem,2.1vw,1.45rem); opacity:.55; letter-spacing:-.01em;
-  }
+<link rel="icon" href="/icon.svg" type="image/svg+xml" />
+<link rel="icon" href="/favicon.ico" sizes="any" />
+<link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+<link rel="manifest" href="/manifest.webmanifest" />
 
-  form{
-    display:flex; align-items:stretch; margin-top:clamp(2rem,5vw,3.4rem);
-    border-bottom:2px solid var(--ink);
-  }
-  input[type=url]{
-    flex:1; min-width:0; border:0; background:none; color:var(--ink);
-    font:inherit; font-size:clamp(1.05rem,2.3vw,1.6rem); letter-spacing:-.01em;
-    padding:.9rem 0; outline:none;
-  }
-  input[type=url]::placeholder{ color:var(--ink); opacity:.3; }
-  button{
-    border:0; background:var(--ink); color:var(--paper); cursor:pointer;
-    font:inherit; font-weight:600; letter-spacing:.01em;
-    padding:0 clamp(1.2rem,3vw,2.4rem); white-space:nowrap;
-  }
-  button:hover{ opacity:.78; }
-  button:disabled{ opacity:.4; cursor:progress; }
+<meta property="og:type" content="website" />
+<meta property="og:site_name" content="Shotful" />
+<meta property="og:title" content="Shotful — full-page screenshots of any website" />
+<meta property="og:description" content="Paste any URL and get the whole page back as one screenshot. Free, no sign-up. Also available as an API." />
+<meta property="og:url" content="https://shotful.pages.dev/" />
+<meta property="og:image" content="https://shotful.pages.dev/og.png" />
+<meta property="og:image:width" content="1200" />
+<meta property="og:image:height" content="630" />
+<meta property="og:image:alt" content="Shotful — screenshot any website, full page, in one call." />
 
-  .opt{
-    display:flex; align-items:center; gap:.55rem; margin-top:1rem;
-    font-size:.92rem; opacity:.65; cursor:pointer; width:max-content;
-  }
-  .opt input{ accent-color:#000; }
+<meta name="twitter:card" content="summary_large_image" />
+<meta name="twitter:title" content="Shotful — full-page screenshots of any website" />
+<meta name="twitter:description" content="Paste any URL and get the whole page back as one screenshot. Free, no sign-up. Also available as an API." />
+<meta name="twitter:image" content="https://shotful.pages.dev/og.png" />
 
-  .status{ margin-top:1.1rem; font-size:.95rem; opacity:.6; min-height:1.3em; }
-  .status.err{ opacity:1; font-weight:600; }
-  .status.ok{ opacity:.85; }
+<link rel="stylesheet" href="/style.css" />
+<script src="/script.js" defer></script>
 
-  .foot{
-    display:flex; justify-content:space-between; gap:16px; flex-wrap:wrap;
-    font-size:.8rem; opacity:.5; letter-spacing:.01em;
-  }
-
-  .result{ border-top:2px solid var(--ink); }
-  .result .head{
-    display:flex; justify-content:space-between; gap:16px; flex-wrap:wrap;
-    padding:14px clamp(20px,4vw,52px); font-size:.82rem; opacity:.6;
-  }
-  .result img{ display:block; width:100%; height:auto; }
-  .result a{ text-decoration:underline; }
-</style>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "WebApplication",
+  "name": "Shotful",
+  "url": "https://shotful.pages.dev/",
+  "applicationCategory": "UtilitiesApplication",
+  "operatingSystem": "Any",
+  "description": "Paste any URL and get the whole page back as a single screenshot.",
+  "offers": { "@type": "Offer", "price": "0", "priceCurrency": "USD" }
+}
+</script>
 </head>
 <body>
 
-<main class="hero">
-  <div class="mark">Shotful</div>
+<div class="hero">
+  <header class="brand">
+    <img src="/icon.svg" alt="" width="22" height="22" />
+    <span class="mark">Shotful</span>
+  </header>
 
-  <div class="core">
+  <main class="core">
     <h1>Screenshot any&nbsp;website.</h1>
     <p class="sub">Full page, in one call. No sign-up.</p>
 
@@ -92,58 +66,17 @@
     </form>
 
     <label class="opt"><input id="full" type="checkbox" checked /> Full page</label>
-    <p class="status" id="status" role="status"></p>
-  </div>
+    <p class="status" id="status" role="status" aria-live="polite"></p>
+    <noscript><p class="status">This tool needs JavaScript. The API works without it: <code>/api/screenshot?url=…</code></p></noscript>
+  </main>
 
-  <div class="foot">
+  <footer class="foot">
     <span id="endpoint">/api/screenshot?url=…</span>
     <a href="https://github.com/rajforsuree/shotful" target="_blank" rel="noopener">Source</a>
-  </div>
-</main>
+  </footer>
+</div>
 
-<section class="result" id="result" hidden></section>
+<section class="result" id="result" hidden aria-label="Screenshot result"></section>
 
-<script>
-  const $ = (id) => document.getElementById(id);
-  const endpoint = location.origin + '/api/screenshot';
-
-  const setStatus = (t, cls = '') => { const s = $('status'); s.className = 'status ' + cls; s.textContent = t; };
-
-  $('form').addEventListener('submit', (e) => {
-    e.preventDefault();
-    const url = $('url').value.trim();
-    if (!url) { setStatus('Enter a URL first.', 'err'); return; }
-
-    const src = endpoint + '?' + new URLSearchParams({
-      url, fullPage: $('full').checked, download: 'true',
-    });
-
-    const go = $('go'), result = $('result');
-    go.disabled = true;
-    setStatus('Capturing… long pages can take a few seconds.');
-    result.hidden = true;
-
-    const img = new Image();
-    img.onload = () => {
-      go.disabled = false;
-      setStatus('Done.', 'ok');
-      result.innerHTML = '';
-      const head = document.createElement('div');
-      head.className = 'head';
-      head.innerHTML = `<span>${img.naturalWidth} × ${img.naturalHeight}px</span>`;
-      const dl = document.createElement('a');
-      dl.href = src; dl.download = 'screenshot.png'; dl.textContent = 'Download';
-      head.appendChild(dl);
-      result.append(head, img);
-      result.hidden = false;
-      result.scrollIntoView({ behavior: 'smooth', block: 'start' });
-    };
-    img.onerror = () => {
-      go.disabled = false;
-      setStatus('Could not capture that URL — check it is a public http(s) site.', 'err');
-    };
-    img.src = src;
-  });
-</script>
 </body>
 </html>
